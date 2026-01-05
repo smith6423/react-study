@@ -34,6 +34,8 @@ const mockData = [
 
 function reducer(state, action) {
   switch (action.type) {
+    case "INTIT":
+      return action.data;
     case "CRAETE":
       return [action.data, ...state];
     case "UPDATE":
