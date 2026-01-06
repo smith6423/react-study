@@ -49,8 +49,8 @@ function reducer(state, action) {
   }
   return state;
 }
-const TransactionStateContext = createContext();
-const TransactionDispatchContext = createContext();
+export const TransactionStateContext = createContext();
+export const TransactionDispatchContext = createContext();
 
 function App() {
   const [transactions, setTransactions] = useReducer(reducer, mockData);
