@@ -1,3 +1,9 @@
+import TransactionEditor from "../components/TransactionEditor";
+
 export default function NewTransaction() {
-  return <h1>NewTransaction</h1>;
+  return (
+    <>
+      <TransactionEditor />
+    </>
+  );
 }
