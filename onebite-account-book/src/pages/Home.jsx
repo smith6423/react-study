@@ -1,8 +1,7 @@
 import "./Home.css";
 import { useContext } from "react";
-
-import TransactionItem from "../components/TranstactionItem";
 import { TransactionStateContext } from "../App";
+import TransactionItem from "../components/TranstactionItem";
 import { useNavigate } from "react-router";
 
 export default function Home() {
@@ -10,15 +9,17 @@ export default function Home() {
   const sortedTransactions = transactions.sort((a, b) => {
     return new Date(b.date) - new Date(a.date);
   });
-  const nav = useNavigate();
-  const onClick = () => {
-    nav("/new-transaction");
-  };
+
+  const navigate = useNavigate();
+  console.log(sortedTransactions);
   return (
     <div className="Home">
       <header>
         <h1>한입 가계부</h1>
-        <div className="new_button" onClick={onClick}>
+        <div
+          className="new_button"
+          onClick={() => navigate("/new-transaction")}
+        >
           + 작성하기
         </div>
       </header>

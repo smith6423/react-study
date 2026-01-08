@@ -1,11 +1,11 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import "./TransactionEditor.css";
 import { useNavigate } from "react-router";
 import { TransactionDispatchContext } from "../App";
 
 const categories = ["🍚 식비", "💧 구독", "🏠 생활", "🏢 급여", "💰 금융"];
 
-export default function TransactionEditor() {
+export default function TransactionEditor({ type, initData }) {
   const [transaction, setTransactions] = useState({
     type: "expense",
     name: "",
@@ -17,7 +17,9 @@ export default function TransactionEditor() {
   const onClickCancelButton = () => {
     nav("/");
   };
-  const { onCreateTransaction } = useContext(TransactionDispatchContext);
+  const { onCreateTransaction, onUpdateTransaction } = useContext(
+    TransactionDispatchContext
+  );
   const onClickSubmitButton = () => {
     if (
       !transaction.name ||
@@ -28,15 +30,37 @@ export default function TransactionEditor() {
       return;
     }
     console.log(transaction);
-    onCreateTransaction(
-      transaction.name,
-      transaction.amount,
-      transaction.type,
-      transaction.category,
-      transaction.date
-    );
+    if (type === "NEW") {
+      onCreateTransaction(
+        transaction.name,
+        transaction.amount,
+        transaction.type,
+        transaction.category,
+        transaction.date
+      );
+    } else {
+      console.log("t", initData.id);
+      onUpdateTransaction(
+        initData.id,
+        transaction.name,
+        transaction.amount,
+        transaction.type,
+        transaction.category,
+        transaction.date
+      );
+    }
     nav("/", { replace: true });
   };
+
+  useEffect(() => {
+    if (type === "EDIT" && initData) {
+      setTransactions({
+        ...initData,
+        date: new Date(initData.date).toISOString().slice(0, 10),
+      });
+    }
+  }, [type, initData]);
+
   return (
     <div className="TransactionEditor">
       <div>

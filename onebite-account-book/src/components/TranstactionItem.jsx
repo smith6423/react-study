@@ -1,10 +1,25 @@
+import { useContext } from "react";
+import { TransactionDispatchContext } from "../App";
+import { useNavigate } from "react-router";
 import "./TransactionItem.css";
 
 export default function TransactionItem(props) {
+  const { onDeleteTransaction } = useContext(TransactionDispatchContext);
   const { id, name, amount, type, category, date } = props;
+  const navigate = useNavigate();
+
+  const onClickEdit = () => {
+    navigate(`/edit-transaction/${id}`);
+  };
+
+  const onClickDelete = () => {
+    if (window.confirm("정말 삭제하시겠습니까?")) {
+      onDeleteTransaction(id);
+    }
+  };
 
   return (
-    <div className="TransactionItem" key={id}>
+    <div className="TransactionItem">
       <div className="category">{category}</div>
       <div className="name">{name}</div>
       <div
@@ -18,8 +33,12 @@ export default function TransactionItem(props) {
       </div>
       <div className="date">{new Date(date).toLocaleDateString()}</div>
       <div className="button_container">
-        <div className="edit_button">수정</div>
-        <div className="delete_button">삭제</div>
+        <div className="edit_button" onClick={onClickEdit}>
+          수정
+        </div>
+        <div className="delete_button" onClick={onClickDelete}>
+          삭제
+        </div>
       </div>
     </div>
   );

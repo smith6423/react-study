@@ -7,7 +7,7 @@ export default function NewTransaction() {
       <header>
         <h1>새로운 기록</h1>
       </header>
-      <TransactionEditor type={"CREATE"} />
+      <TransactionEditor type={"NEW"} />
     </div>
   );
 }

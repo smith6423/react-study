@@ -1,9 +1,38 @@
-import { createContext, useReducer, useRef } from "react";
+import { Route, Routes } from "react-router";
 import "./App.css";
-import EditTransaction from "./pages/EditTransaction";
 import Home from "./pages/Home";
 import NewTransaction from "./pages/NewTransaction";
-import { Route, Routes } from "react-router";
+import EditTransaction from "./pages/EditTransaction";
+import { createContext, useReducer, useRef } from "react";
+
+function reducer(state, action) {
+  switch (action.type) {
+    case "INIT":
+      // State 초기화
+      // action.data로 transaction State 값 교체
+      return action.data;
+
+    case "CREATE":
+      // 새로운 아이템 추가,
+      // action.data에 담긴 새로운 요소를 transactions State에 추가
+      return [...state, action.data];
+
+    case "UPDATE":
+      // 기존 아이템 수정
+      // action.data.id번 아이디를 갖는 아이템을 action.data에 담긴 값으로 수정
+      return state.map((transaction) =>
+        transaction.id === action.data.id ? action.data : transaction
+      );
+
+    case "DELETE":
+      // 기존 아이템 삭제
+      // action.id번 아이디를 갖는 아이템을 transactions State에서 삭제
+      return state.filter((transaction) => transaction.id !== action.id);
+
+    default:
+      return state;
+  }
+}
 
 const mockData = [
   {
@@ -32,63 +61,32 @@ const mockData = [
   },
 ];
 
-function reducer(state, action) {
-  switch (action.type) {
-    case "INIT":
-      return action.data;
-    case "CRAETE":
-      return [action.data, ...state];
-    case "UPDATE":
-      return state.map((item) => {
-        String(action.data.id) === String(item.id) ? action.data : item;
-      });
-    case "DELETE":
-      return state.filter((item) => {
-        String(action.data.id) !== String(item.id);
-      });
-  }
-  return state;
-}
 export const TransactionStateContext = createContext();
 export const TransactionDispatchContext = createContext();
 
 function App() {
-  const [transactions, setTransactions] = useReducer(reducer, mockData);
-  const id = useRef(3);
+  const [transactions, dispatch] = useReducer(reducer, mockData);
+  const idRef = useRef(3);
+
   const onCreateTransaction = (name, amount, type, category, date) => {
-    setTransactions({
+    // 새로운 아이템을 추가하는 함수
+    dispatch({
       type: "CREATE",
-      data: {
-        id: id.current++,
-        amount,
-        type,
-        category,
-        date,
-      },
+      data: { id: idRef.current++, name, amount, type, category, date },
     });
   };
 
   const onUpdateTransaction = (id, name, amount, type, category, date) => {
-    setTransactions({
+    // 기존 아이템을 수정하는 함수
+    dispatch({
       type: "UPDATE",
-      data: {
-        id,
-        name,
-        amount,
-        type,
-        category,
-        date,
-      },
+      data: { id, name, amount, type, category, date },
     });
   };
 
   const onDeleteTransaction = (id) => {
-    setTransactions({
-      type: "DELETE",
-      data: {
-        id,
-      },
-    });
+    // 기존 아이템을 삭제하는 함수
+    dispatch({ type: "DELETE", id });
   };
 
   return (
@@ -96,8 +94,8 @@ function App() {
       <TransactionDispatchContext.Provider
         value={{
           onCreateTransaction,
-          onDeleteTransaction,
           onUpdateTransaction,
+          onDeleteTransaction,
         }}
       >
         <Routes>
